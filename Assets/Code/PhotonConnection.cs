@@ -16,28 +16,29 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     /// Brief: Código para conectar a cuartos y servidores de Photon.
 
     [Header("Room Info")]
-
-    //[SerializeField] TMP_InputField m_roomInputField;
     [SerializeField] TMP_InputField m_newNickname;
     [SerializeField] TMP_InputField m_newRoomName;
     [SerializeField] TMP_InputField m_newNumberOfPlayer;
 
-    //[SerializeField] TextMeshProUGUI m_joinRoomFailedTextMeshProUGUI;
-    //[SerializeField] TextMeshProUGUI m_createRoomFailedTextMeshProUGUI;
+    [Header("All error messages")]
+    [SerializeField] TextMeshProUGUI m_joinRoomFailedTextMeshProUGUI;
+    [SerializeField] TextMeshProUGUI m_createRoomFailedTextMeshProUGUI;
     [SerializeField] TextMeshProUGUI m_nicknameFailedTextMeshProUGUI;
     [SerializeField] TextMeshProUGUI m_creditsTextMeshProUGUI;
 
+    [Header("All buttons")]
     [SerializeField] Button m_playButton;
     [SerializeField] Button m_exitButton;
     [SerializeField] Button m_backButton;
     [SerializeField] Button m_vsModeButton;
-    [SerializeField] Button m_coopModeButton;
 
-    [SerializeField] GameObject m_menuModePanel;
-    [SerializeField] GameObject m_selectModePanel;
+    [Header("All main menus subpanels")]
+    [SerializeField] GameObject m_titlePanel;
+    [SerializeField] GameObject m_setupPanel;
 
+    [Header("All major panels")]
     [SerializeField] GameObject m_loadingPanel;
-    [SerializeField] GameObject m_menuPanel;
+    [SerializeField] GameObject m_mainMenuPanel;
 
     void Start()
     {
@@ -54,7 +55,8 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     {
         print("Se ha entrado al Lobby Abstracto");
         m_loadingPanel.SetActive(false);
-        m_menuPanel.SetActive(true);
+        m_mainMenuPanel.SetActive(true);
+        m_titlePanel.SetActive(true);
         Cursor.visible = true;
     }
 
@@ -140,28 +142,23 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
 
     public void PlayButton()
     {
-        if(m_newNickname.text != "")
-        {
-            m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(false);
+        //m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(false);
 
-            m_menuModePanel.SetActive(false);
-            m_selectModePanel.SetActive(true);
+        m_titlePanel.SetActive(false);
+        m_setupPanel.SetActive(true);
 
-            m_newRoomName.gameObject.SetActive(false);
-            m_newNickname.gameObject.SetActive(false);
+        m_newRoomName.gameObject.SetActive(true);
+        m_newNickname.gameObject.SetActive(true);
 
-            m_playButton.gameObject.SetActive(false);
-            m_exitButton.gameObject.SetActive(false);
-            m_backButton.gameObject.SetActive(true);
-            m_vsModeButton.gameObject.SetActive(true);
-            m_creditsTextMeshProUGUI.gameObject.SetActive(true);
-        }
-        else
-        {
-            m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
-            m_nicknameFailedTextMeshProUGUI.text = "Introduce un nombre, no lo dejes en blanco.";
-            return;
-        }
+        m_playButton.gameObject.SetActive(false);
+        m_exitButton.gameObject.SetActive(false);
+        m_backButton.gameObject.SetActive(true);
+        m_vsModeButton.gameObject.SetActive(true);
+        m_creditsTextMeshProUGUI.gameObject.SetActive(true);
+
+        //m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
+        //m_nicknameFailedTextMeshProUGUI.text = "Introduce un nombre, no lo dejes en blanco.";
+        //return;
     }
 
     public void ExitButton()
@@ -172,11 +169,11 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     public void BackButton()
     {
         m_creditsTextMeshProUGUI.gameObject.SetActive(false);
-        m_menuModePanel.SetActive(true);
-        m_selectModePanel.SetActive(false);
+        m_titlePanel.SetActive(true);
+        m_setupPanel.SetActive(false);
 
-        m_newRoomName.gameObject.SetActive(true);
-        m_newNickname.gameObject.SetActive(true);
+        m_newRoomName.gameObject.SetActive(false);
+        m_newNickname.gameObject.SetActive(false);
 
         m_playButton.gameObject.SetActive(true);
         m_exitButton.gameObject.SetActive(true);
@@ -184,18 +181,11 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_vsModeButton.gameObject.SetActive(false);
     }
 
-    void setNewColorPlayer(Color p_newColor)
+    void setTypeOfPlayer(Color p_newColor)
     {
         gameObject.GetComponent<SpriteRenderer>().color = p_newColor;
         Hashtable playerProperties = new Hashtable();
         playerProperties["playerColor"] = p_newColor;
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
-    }
-
-    void DamageOtherPlayer(Player p_otherPlayer)
-    {
-        Hashtable playerStats = new Hashtable();
-        playerStats["damage"] = 1;
-        p_otherPlayer.SetCustomProperties(playerStats);
     }
 }
