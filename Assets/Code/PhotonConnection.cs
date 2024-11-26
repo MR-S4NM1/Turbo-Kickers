@@ -40,6 +40,10 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     [SerializeField] GameObject m_loadingPanel;
     [SerializeField] GameObject m_mainMenuPanel;
 
+    [Header("Type of player")]
+    public TypeOfPlayerMenu m_typeOfPlayerMenu;
+
+
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
@@ -181,11 +185,31 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_vsModeButton.gameObject.SetActive(false);
     }
 
-    void setTypeOfPlayer(Color p_newColor)
+    public void setPlayerA()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = p_newColor;
+        setTypeOfPlayer(TypeOfPlayerMenu.Red);
+    }
+
+    public void setPlayerB()
+    {
+        setTypeOfPlayer(TypeOfPlayerMenu.Blue);
+    }
+
+    void setTypeOfPlayer(TypeOfPlayerMenu p_typeOfPlayer)
+    {
+        m_typeOfPlayerMenu = p_typeOfPlayer;
         Hashtable playerProperties = new Hashtable();
-        playerProperties["playerColor"] = p_newColor;
+        playerProperties["playerType"] = p_typeOfPlayer;
+        print("Soy: " + p_typeOfPlayer.ToString());
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
     }
 }
+
+public enum TypeOfPlayerMenu
+{
+    Blue,
+    Red,
+    Green,
+    Yellow
+}
+

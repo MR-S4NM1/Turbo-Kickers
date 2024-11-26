@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 20009033}
   - component: {fileID: 20009032}
   m_Layer: 5
-  m_Name: CharacterButton
+  m_Name: CharacterButtonA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,7 +277,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 20009033}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85649454}
+        m_TargetAssemblyTypeName: PhotonConnection, Assembly-CSharp
+        m_MethodName: setPlayerA
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &20009033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,6 +506,7 @@ MonoBehaviour:
   m_setupPanel: {fileID: 305519676}
   m_loadingPanel: {fileID: 143495595}
   m_mainMenuPanel: {fileID: 225182602}
+  m_typeOfPlayerMenu: 0
 --- !u!4 &85649455
 Transform:
   m_ObjectHideFlags: 0
@@ -3342,7 +3355,7 @@ GameObject:
   - component: {fileID: 948884170}
   - component: {fileID: 948884169}
   m_Layer: 5
-  m_Name: CharacterButton (1)
+  m_Name: CharacterButtonB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3411,7 +3424,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 948884170}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85649454}
+        m_TargetAssemblyTypeName: PhotonConnection, Assembly-CSharp
+        m_MethodName: setPlayerB
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &948884170
 MonoBehaviour:
   m_ObjectHideFlags: 0

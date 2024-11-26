@@ -27,6 +27,8 @@ public class LevelManager : MonoBehaviourPunCallbacks
     PhotonView m_photonView;
     LevelManagerState m_currentState;
 
+    public TypeOfPlayer m_typeOfPlayer;
+
     private void Awake()
     {
         if (instance == null)
@@ -99,24 +101,17 @@ public class LevelManager : MonoBehaviourPunCallbacks
     /// </summary>
     void playing()
     {
-        assignTypeOfPlayer();
+        //assignTypeOfPlayer();
         setTypeOfPlayer();
     }
 
     //Falta asignar cuantos roles hay segun la cantidad de jugadores
-    void assignTypeOfPlayer(){
-        print("Se crea Hastable con la asignacion del nuevo rol");
-        Player[] m_playersArray = PhotonNetwork.PlayerList;
-        //List<GameplayRole> roles = new List<GameplayRole>();
-
-        //for(int i = 0; i < m_playersArray.Length; i++)
-        //{
-        //    int randIndex = Random.Range(0, roles.Count);
-        //    Hashtable m_playerProperties = new Hashtable();
-        //    m_playerProperties["Role"] = roles[randIndex].ToString();
-        //    m_playersArray[i].SetCustomProperties(m_playerProperties);
-        //    roles.RemoveAt(randIndex);
-        //}
+    void assignTypeOfPlayer(TypeOfPlayer p_typeOfPlayer)
+    {
+        m_typeOfPlayer = p_typeOfPlayer;
+        Hashtable playerProperties = new Hashtable();
+        playerProperties["playerType"] = p_typeOfPlayer;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
     }
 
     [PunRPC]
@@ -154,6 +149,7 @@ public class LevelManager : MonoBehaviourPunCallbacks
     {
         m_photonView.RPC("showNewGameInfo", RpcTarget.All, p_playerInfo);
     }
+
 }
 public enum LevelManagerState
 {
