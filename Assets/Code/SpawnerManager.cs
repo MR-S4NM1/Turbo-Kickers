@@ -10,20 +10,30 @@ public class SpawnerManager : MonoBehaviour
 
     PhotonView m_PV;
 
-    
-
-
     private void Start()
     {
         m_PV = GetComponent<PhotonView>();
+
+        if(PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("playerType", out object playerType))
+        {
+            string playerTypeFromHashTable = (string)playerType;
+
+            int posNum = Random.Range(0, m_spawner.childCount);
+
+            switch (playerTypeFromHashTable)
+            {
+                case "Blue":
+                    PhotonNetwork.Instantiate("PlayerBlue", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    break;
+                case "Red":
+                    PhotonNetwork.Instantiate("PlayerRed", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    break;
+            }
+        }
 
         //if (m_PV.IsMine)
         //{
         //    PhotonNetwork.Instantiate("LevelManager", transform.position, Quaternion.identity);
         //}
-
-        int posNum = Random.Range(0, m_spawner.childCount);
-
-        PhotonNetwork.Instantiate("Player", m_spawner.GetChild(posNum).position, Quaternion.identity);
     }
 }

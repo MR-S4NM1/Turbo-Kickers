@@ -43,10 +43,13 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     [Header("Type of player")]
     public TypeOfPlayerMenu m_typeOfPlayerMenu;
 
+    protected bool userHasChosenPlayerType;
+
 
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
+        userHasChosenPlayerType = false;
     }
 
     public override void OnConnectedToMaster()
@@ -62,12 +65,14 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_mainMenuPanel.SetActive(true);
         m_titlePanel.SetActive(true);
         Cursor.visible = true;
+        userHasChosenPlayerType = false;
     }
 
     public override void OnJoinedRoom()
     {
         print("Se entró al room");
         PhotonNetwork.LoadLevel("Gameplay");
+        userHasChosenPlayerType = false;
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -115,7 +120,10 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         }
         else
         {
-            PhotonNetwork.JoinRoom(m_newRoomName.text);
+            if (userHasChosenPlayerType)
+            {
+                PhotonNetwork.JoinRoom(m_newRoomName.text);
+            }
         }
     }
 
@@ -140,7 +148,10 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         }
         else
         {
-            PhotonNetwork.CreateRoom(m_newRoomName.text, NewRoomInfo(), null);
+            if (userHasChosenPlayerType)
+            {
+                PhotonNetwork.CreateRoom(m_newRoomName.text, NewRoomInfo(), null);
+            }
         }
     }
 
@@ -159,6 +170,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_backButton.gameObject.SetActive(true);
         m_vsModeButton.gameObject.SetActive(true);
         m_creditsTextMeshProUGUI.gameObject.SetActive(true);
+        userHasChosenPlayerType = false;
 
         //m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
         //m_nicknameFailedTextMeshProUGUI.text = "Introduce un nombre, no lo dejes en blanco.";
@@ -188,18 +200,20 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     public void setPlayerA()
     {
         setTypeOfPlayer(TypeOfPlayerMenu.Red);
+        userHasChosenPlayerType = true;
     }
 
     public void setPlayerB()
     {
         setTypeOfPlayer(TypeOfPlayerMenu.Blue);
+        userHasChosenPlayerType = true;
     }
 
     void setTypeOfPlayer(TypeOfPlayerMenu p_typeOfPlayer)
     {
         m_typeOfPlayerMenu = p_typeOfPlayer;
         Hashtable playerProperties = new Hashtable();
-        playerProperties["playerType"] = p_typeOfPlayer;
+        playerProperties["playerType"] = p_typeOfPlayer.ToString();
         print("Soy: " + p_typeOfPlayer.ToString());
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
     }

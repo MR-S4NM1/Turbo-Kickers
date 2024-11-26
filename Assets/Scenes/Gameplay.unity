@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -201,6 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spawner: {fileID: 80160971}
+  m_connection: {fileID: 543143830}
 --- !u!114 &80160973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +224,89 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!1 &543143828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 543143831}
+  - component: {fileID: 543143830}
+  - component: {fileID: 543143829}
+  m_Layer: 0
+  m_Name: PhotonConnection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &543143829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543143828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &543143830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543143828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887fa7f9b5007464a836152a7b7d47f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_newNickname: {fileID: 0}
+  m_newRoomName: {fileID: 0}
+  m_newNumberOfPlayer: {fileID: 0}
+  m_joinRoomFailedTextMeshProUGUI: {fileID: 0}
+  m_createRoomFailedTextMeshProUGUI: {fileID: 0}
+  m_nicknameFailedTextMeshProUGUI: {fileID: 0}
+  m_creditsTextMeshProUGUI: {fileID: 0}
+  m_playButton: {fileID: 0}
+  m_exitButton: {fileID: 0}
+  m_backButton: {fileID: 0}
+  m_vsModeButton: {fileID: 0}
+  m_titlePanel: {fileID: 0}
+  m_setupPanel: {fileID: 0}
+  m_loadingPanel: {fileID: 0}
+  m_mainMenuPanel: {fileID: 0}
+  m_typeOfPlayerMenu: 0
+--- !u!4 &543143831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543143828}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &644310873
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,3 +500,4 @@ SceneRoots:
   - {fileID: 644310876}
   - {fileID: 1715889436}
   - {fileID: 80160971}
+  - {fileID: 543143831}
