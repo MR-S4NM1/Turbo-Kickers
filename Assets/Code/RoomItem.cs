@@ -10,6 +10,8 @@ public class RoomItem : MonoBehaviour
     PhotonConnection m_photonConnectionManager;
     #endregion
 
+    string m_nameRoom;
+
     #region UnityMethods
 
     private void Start()
@@ -20,10 +22,16 @@ public class RoomItem : MonoBehaviour
     #endregion
 
     #region PublicMethods
-
-    public void setNewRoomName(string p_roomName)
+    public void setNewRoomName(string p_roomName, string p_roomInfo)
     {
         m_roomName.text = p_roomName;
+        m_nameRoom = p_roomName;
+
+    }
+
+    public void ClickToJoinRoom()
+    {
+        m_photonConnectionManager.joinRoom(m_roomName.text);
     }
 
     #endregion

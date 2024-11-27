@@ -8,6 +8,7 @@ using TMPro;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using System.Linq;
+using Palmmedia.ReportGenerator.Core.Common;
 
 public class PhotonConnection : MonoBehaviourPunCallbacks
 {
@@ -46,8 +47,14 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     protected bool userHasChosenPlayerType;
 
 
+    [SerializeField] protected RoomItem m_roomItemButton;
+    protected List<RoomItem> m_roomItemsList;
+    [SerializeField] protected Transform m_contentObject;
+
+
     void Start()
     {
+        m_roomItemsList = new List<RoomItem>();
         PhotonNetwork.ConnectUsingSettings();
         userHasChosenPlayerType = false;
     }
@@ -89,17 +96,17 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_joinRoomFailedTextMeshProUGUI.text = "Hubo un error al entrar al room: " + m_roomInputField.text;*/
     }
 
-    RoomOptions NewRoomInfo()
+    RoomOptions NewRoomInfo(int p_maxPlayersInThisRoom)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 4;
+        roomOptions.MaxPlayers = p_maxPlayersInThisRoom;
         roomOptions.IsOpen = true;
         roomOptions.IsVisible = true;
 
         return roomOptions;
     }
 
-    public void joinRoom()
+    public void joinRoom(string p_roomName)
     {
         if (m_newNickname.text == "")
         {
@@ -122,10 +129,15 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         {
             if (userHasChosenPlayerType)
             {
-                PhotonNetwork.JoinRoom(m_newRoomName.text);
+                PhotonNetwork.JoinRoom(p_roomName);
             }
         }
     }
+
+    //public void joinRoom(string p_roomName)
+    //{
+    //    PhotonNetwork.JoinRoom(p_roomName);
+    //}
 
     public void createRoom()
     {
@@ -141,16 +153,24 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
             PhotonNetwork.NickName = m_newNickname.text;
         }
 
-        if (m_newRoomName.text == "")
+        if(int.Parse(m_newNumberOfPlayer.text) % 2 == 1)
         {
-            //m_createRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
-            //m_createRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+            print("Debe ser par");
+            return;
         }
-        else
+        else if(int.Parse(m_newNumberOfPlayer.text) % 2 == 0)
         {
-            if (userHasChosenPlayerType)
+            if (m_newRoomName.text == "")
             {
-                PhotonNetwork.CreateRoom(m_newRoomName.text, NewRoomInfo(), null);
+                //m_createRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
+                //m_createRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+            }
+            else
+            {
+                if (userHasChosenPlayerType)
+                {
+                    PhotonNetwork.CreateRoom(m_newRoomName.text, NewRoomInfo(int.Parse(m_newNumberOfPlayer.text)), null);
+                }
             }
         }
     }
@@ -209,13 +229,32 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         userHasChosenPlayerType = true;
     }
 
-    void setTypeOfPlayer(TypeOfPlayerMenu p_typeOfPlayer)
+    protected void setTypeOfPlayer(TypeOfPlayerMenu p_typeOfPlayer)
     {
         m_typeOfPlayerMenu = p_typeOfPlayer;
         Hashtable playerProperties = new Hashtable();
         playerProperties["playerType"] = p_typeOfPlayer.ToString();
         print("Soy: " + p_typeOfPlayer.ToString());
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        foreach(RoomItem roomInfo in m_roomItemsList)
+        {
+            Destroy(roomInfo.gameObject);
+        }
+        m_roomItemsList.Clear();
+
+        foreach(RoomInfo roomInfo in roomList)
+        {
+            if (roomInfo.IsOpen)
+            {
+                RoomItem m_newButtonRoom = Instantiate(m_roomItemButton, m_contentObject);
+                m_newButtonRoom.setNewRoomName(roomInfo.Name, roomInfo.ToStringFull());
+                m_roomItemsList.Add(m_newButtonRoom);
+            }
+        }
     }
 }
 
