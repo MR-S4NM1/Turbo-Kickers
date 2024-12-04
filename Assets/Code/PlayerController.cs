@@ -11,14 +11,15 @@ using ExitGames.Client.Photon.StructWrapping;
 using System.Linq;
 using UnityEngine.UI;
 using Photon.Pun.Demo.PunBasics;
+using Cinemachine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     #region References
 
-    [SerializeField, HideInInspector] protected Rigidbody rb;
+    [SerializeField] protected Rigidbody rb;
     //[SerializeField] TextMeshPro m_nickname;
-    [SerializeField, HideInInspector] protected Animator m_myAnim;
+    [SerializeField] protected Animator m_myAnim;
 
     [SerializeField] Transform m_cam;
     [SerializeField] BoxCollider m_boxCollider;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
 
     [Header("UI Player")]
     [SerializeField] TextMeshProUGUI m_currentRoleText;
+    [SerializeField] TextMeshPro m_nicknameTMP;
 
     [SerializeField] protected string m_currentRoleName;
     [SerializeField] public GameObject[] m_arrowParts;
@@ -47,10 +49,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     [SerializeField] protected float playerInputHorizontal;
     [SerializeField] protected float playerInputForward;
     Vector3 m_moveDirection;
-    Vector3 m_moveDirWithCam;
-    float angle;
-    [SerializeField] int m_life;
-    //Player m_otherPlayer;
+
+    Vector3 cameraForward;
+    Vector3 cameraRight;
 
     #endregion
 
@@ -62,14 +63,14 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         //m_PV.Owner.NickName = PhotonNetwork.NickName; // NO PEDIRLO NUNCA MÁS DE UNA VEZ.
         //m_nickname.text = m_PV.Owner.NickName;
         gameObject.name = m_PV.Owner.NickName;
-        m_myAnim.SetBool("IsMoving", false);
-        m_myAnim.SetBool("IsIdle", true);
+        m_myAnim.SetBool("JOG", false);
+        m_myAnim.SetBool("STOP", true);
         PhotonPeer.RegisterType(typeof(Color), (byte)'C', TypeTransformer.SerializeColor, TypeTransformer.DeserializeColor);
-        m_life = 1;
         m_boxCollider.enabled = false;
         m_triggerCollision.SetActive(true);
         m_particleSystem.gameObject.SetActive(false);
         m_currentRoleText.text = "Role...";
+        m_nicknameTMP.text = gameObject.name;
     }
 
     private void Update()
@@ -78,21 +79,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         {
             return;
         }
-        //ActivateCollCor();
-        //print("Live: " + m_life);
-
-        /*if (LevelManager.instance.GetCurrentState == LevelManagerState.Playing)
-        {
-            GetNewGameplayRole() ;
-        }*/
-        if (Input.GetKey(KeyCode.E))
-        {
-            m_triggerCollision.tag = "Damage";
-        }
-        else if (Input.GetKeyUp(KeyCode.E))
-        {
-            m_triggerCollision.tag = "Player";
-        }
+        m_nicknameTMP.text = gameObject.name;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -116,53 +103,18 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
         //m_nickname.transform.position = new Vector3(transform.position.x, transform.position.y + 4.5f, transform.position.z);
         PlayerMov();
+        m_nicknameTMP.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
     }
 
     private void OnTriggerEnter(Collider p_other)
     {
-        if (p_other.CompareTag("Damage"))
-        {
-            //if (m_PV.IsMine)
-            //{
-            print("Moriste");
 
-            m_PV.RPC("TakingDamage", RpcTarget.AllBuffered, 1);
-
-                //p_other.GetComponent<PlayerController>().DestroyThisPlayer();
-            //}
-            //m_otherPlayer = other.GetComponent<PhotonView>().Owner;
-            //DamageOtherPlayer(m_otherPlayer);
-
-            //if (m_PV.IsMine)
-            //{
-
-            //}
-
-            //TakeDamageFunct();
-
-            //TakingDamage(1);
-        }
     }
 
     private void OnTriggerStay(Collider p_other)
     {
-        if (p_other.CompareTag("NPC") && Input.GetKey(KeyCode.E))
-        {
-            p_other.GetComponent<NPCMovement>().DestroyNPC();
-            //PhotonNetwork.Destroy(p_other.gameObject);
-        }
+        
     }
-
-    /*private void OnCollisionStay(Collision collision)
-    {
-        if(collision.gameObject.tag == "Damage")
-        {
-            if (m_PV.IsMine)
-            {
-                m_PV.RPC("TakingDamage", RpcTarget.All, 1);
-            }
-        }
-    }*/
 
     private void OnEnable()
     {
@@ -176,17 +128,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     #endregion
 
     #region PublicMethods
-
-    // Esta es para que, cuando se llame a una función, lo que hacen estas funciones, se llaman automáticamente.
-    // En este caso, esta se le manda a todos los que andan en la partida.
-    //public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
-    //{
-    //    if (changedProps.ContainsKey("damage"))
-    //    {
-    //        //Modificar la vida del usuario actual.
-    //        m_life -= (int)changedProps["damage"];
-    //    }
-    //}
 
     public void OnEvent(EventData photonEvent)
     {
@@ -202,14 +143,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
             case 3:
                 break;
         }
-
-        /*if (eventCode == 1)
-        {
-            string data = (string)photonEvent.CustomData;
-            //Hacer algo con el string
-
-            GetNewGameplayRole();
-        }*/
     }
 
     #endregion
@@ -246,27 +179,32 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         {
             playerInputHorizontal = Input.GetAxisRaw("Horizontal");
             playerInputForward = Input.GetAxisRaw("Vertical");
-            m_moveDirection = new Vector3(playerInputHorizontal, 0, playerInputForward).normalized;
-            //rb.velocity = m_moveDirection * (playerSpeed) /** Time.fixedDeltaTime*/;
+
+            cameraForward = Camera.main.transform.forward;
+            cameraRight = Camera.main.transform.right;
+
+            cameraForward.y = 0;
+            cameraRight.y = 0;
+
+            cameraForward.Normalize();
+            cameraRight.Normalize();
+
+            m_moveDirection = (cameraForward * playerInputForward + cameraRight * playerInputHorizontal).normalized;
+
+            rb.velocity = m_moveDirection * playerSpeed;
 
             if (m_moveDirection.magnitude > 0.1f)
             {
-                angle = Mathf.Atan2(m_moveDirection.x, m_moveDirection.z) * Mathf.Rad2Deg + m_cam.eulerAngles.y;
-                transform.rotation = Quaternion.Euler(0, angle + 25.0f, 0);
-                m_myAnim.SetBool("IsMoving", true);
-                m_myAnim.SetBool("IsIdle", false);
+                transform.rotation = Quaternion.LookRotation(m_moveDirection);
+                m_myAnim.SetBool("JOG", true);
+                m_myAnim.SetBool("STOP", false);
                 m_myAnim.SetFloat("MovingFloat", m_moveDirection.magnitude);
             }
             else
             {
-                //m_myAnim.SetFloat("MovingFloat", _MoveDirection.magnitude);
-                m_myAnim.SetBool("IsMoving", false);
-                m_myAnim.SetBool("IsIdle", true);
+                m_myAnim.SetBool("JOG", false);
+                m_myAnim.SetBool("STOP", true);
             }
-
-            m_moveDirWithCam = Quaternion.Euler(0.0f, angle, 0.0f) * Vector3.forward;
-            m_triggerCollision.transform.rotation = Quaternion.Euler(0, angle + 25.0f, 0);
-            rb.Move(rb.position + playerSpeed * m_moveDirWithCam.normalized * Time.fixedDeltaTime * m_moveDirection.magnitude, Quaternion.Euler(0.0f, angle, 0.0f));
         }
     }
 
@@ -275,41 +213,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         if (m_PV.IsMine)
         {
             gameObject.GetComponentInChildren<TextMeshPro>().text = p_nickname;
-        }
-    }
-
-    /*void setNewColorPlayer(Color p_newColor)
-    {
-        gameObject.GetComponent<SpriteRenderer>().color = p_newColor;
-
-        if (m_PV.IsMine)
-        {
-            Hashtable playerProperties = new Hashtable();
-            playerProperties["playerColor"] = p_newColor;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
-        }
-    }*/
-
-    /*void DamageOtherPlayer(Player p_otherPlayer)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            Hashtable playerStats = new Hashtable();
-            playerStats["damage"] = 1;
-            p_otherPlayer.SetCustomProperties(playerStats);
-        }
-    }*/
-
-    [PunRPC]
-    void TakingDamage(int p_damage)
-    {
-        m_life -= p_damage;
-
-        if (m_life <= 0)
-        {
-            //Destroy(gameObject);
-            StartCoroutine(WaitForParticleSystem());
-            //PhotonNetwork.LeaveRoom();
         }
     }
 
