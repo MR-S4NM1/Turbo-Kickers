@@ -34,6 +34,11 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     [SerializeField] public GameObject[] m_arrowParts;
     [SerializeField] public Material[] m_materials;
 
+    [Header("Ball")]
+    [SerializeField] protected Transform m_ballPosition;
+    [SerializeField] protected float m_kickForce;
+    [SerializeField] protected bool m_canKick;
+
     PhotonView m_PV;
 
     #endregion
@@ -79,7 +84,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         {
             return;
         }
-        m_nicknameTMP.text = gameObject.name;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -93,6 +97,18 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
                 LevelNetworkManager.Instance.disconnectFromCurrentRoom();
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.K) && m_canKick)
+        {
+            playerSpeed = 0;
+            m_myAnim.SetBool("JOG", false);
+            m_myAnim.SetBool("KICK", true);
+            GameObject m_ball = m_ballPosition.GetChild(0).gameObject;
+            m_ball.GetComponent<Rigidbody>().isKinematic = false;
+            m_ball.gameObject.transform.SetParent(null);
+            m_ball.GetComponent<Rigidbody>().AddForce(transform.forward * m_kickForce, ForceMode.Impulse);
+            StartCoroutine(cooldownTimer());
+        }
     }
 
     private void FixedUpdate()
@@ -103,17 +119,19 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
         //m_nickname.transform.position = new Vector3(transform.position.x, transform.position.y + 4.5f, transform.position.z);
         PlayerMov();
+        m_nicknameTMP.text = gameObject.name;
         m_nicknameTMP.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
-    }
-
-    private void OnTriggerEnter(Collider p_other)
-    {
-
     }
 
     private void OnTriggerStay(Collider p_other)
     {
-        
+        if (p_other.gameObject.CompareTag("Ball") && !m_canKick)
+        {
+            p_other.GetComponent<Rigidbody>().isKinematic = true;
+            p_other.gameObject.transform.position = m_ballPosition.transform.position;
+            p_other.gameObject.transform.SetParent(m_ballPosition.transform, true);
+            m_canKick = true;
+        }
     }
 
     private void OnEnable()
@@ -262,6 +280,15 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
                     break;
             }
         }
+    }
+
+    protected IEnumerator cooldownTimer()
+    {
+        yield return new WaitForSeconds(1);
+        m_myAnim.SetBool("KICK", false);
+        m_myAnim.SetBool("JOG", true);
+        playerSpeed = 12;
+        m_canKick = false;
     }
 
     #endregion
