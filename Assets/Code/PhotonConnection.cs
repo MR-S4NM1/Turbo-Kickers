@@ -8,7 +8,6 @@ using TMPro;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using System.Linq;
-using Palmmedia.ReportGenerator.Core.Common;
 
 public class PhotonConnection : MonoBehaviourPunCallbacks
 {
@@ -106,7 +105,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         return roomOptions;
     }
 
-    public void joinRoom(string p_roomName)
+    public void joinRoom()
     {
         if (m_newNickname.text == "")
         {
@@ -129,7 +128,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         {
             if (userHasChosenPlayerType)
             {
-                PhotonNetwork.JoinRoom(p_roomName);
+                PhotonNetwork.JoinRoom(m_newRoomName.text);
             }
         }
     }

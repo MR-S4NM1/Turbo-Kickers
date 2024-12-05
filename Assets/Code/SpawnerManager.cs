@@ -23,10 +23,10 @@ public class SpawnerManager : MonoBehaviour
             switch (playerTypeFromHashTable)
             {
                 case "Blue":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_Black", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_A", m_spawner.GetChild(posNum).position, Quaternion.identity);
                     break;
                 case "Red":
-                    PhotonNetwork.Instantiate("PlayerRed", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_B", m_spawner.GetChild(posNum).position, Quaternion.identity);
                     break;
             }
         }

@@ -31,7 +31,7 @@ public class RoomItem : MonoBehaviour
 
     public void ClickToJoinRoom()
     {
-        m_photonConnectionManager.joinRoom(m_roomName.text);
+        //m_photonConnectionManager.joinRoom(m_roomName.text);
     }
 
     #endregion

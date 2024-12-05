@@ -1446,7 +1446,7 @@ SkinnedMeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 244deb55d293e9040a8417c4445d8972, type: 2}
   - {fileID: 2100000, guid: 48e1f07e8598c4846aa47d1a63bd331a, type: 2}
-  - {fileID: 2100000, guid: 56c50f84061290943af4a87f34d73bd6, type: 2}
+  - {fileID: 2100000, guid: b18c5e8da42e2444e830f4e217404b88, type: 2}
   - {fileID: 2100000, guid: e8d78a524d112c340a93e8a7a2007f68, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -2568,6 +2568,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3089731710569499589}
+  - component: {fileID: 6066735558465773826}
+  - component: {fileID: 2653373113115211920}
   m_Layer: 0
   m_Name: BallPosition
   m_TagString: Untagged
@@ -2590,6 +2592,45 @@ Transform:
   m_Children: []
   m_Father: {fileID: 588798724015125666}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6066735558465773826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6517573121333668353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 2653373113115211920}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &2653373113115211920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6517573121333668353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &6542559224506249573
 GameObject:
   m_ObjectHideFlags: 0
@@ -2926,8 +2967,9 @@ GameObject:
   - component: {fileID: 7538269251712607906}
   - component: {fileID: 7193213814127549607}
   - component: {fileID: 5359688730909781529}
+  - component: {fileID: 5374920299110116026}
   m_Layer: 0
-  m_Name: Vefects_Vexa_Black
+  m_Name: Vefects_Vexa_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3019,7 +3061,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_listGameObj:
-  - {fileID: 7913973591727700281}
   - {fileID: 2025695895237648723}
   - {fileID: 1893846482684588251}
   - {fileID: 1054888453548453335}
@@ -3051,7 +3092,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 80
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &22891359402417219
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3094,6 +3135,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7193213814127549607}
   - {fileID: 5359688730909781529}
+  - {fileID: 5374920299110116026}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -3143,6 +3185,22 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &5374920299110116026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7913973591727700281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &7975500436514226742
 GameObject:
   m_ObjectHideFlags: 0

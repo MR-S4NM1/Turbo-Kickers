@@ -7,7 +7,6 @@ using Photon.Realtime;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Unity.VisualScripting;
-using ExitGames.Client.Photon.StructWrapping;
 using System.Linq;
 using UnityEngine.UI;
 using Photon.Pun.Demo.PunBasics;
@@ -80,6 +79,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
 
     private void Update()
     {
+        m_nicknameTMP.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
+        m_nicknameTMP.text = gameObject.name;
+
         if (!m_PV.IsMine)
         {
             return;
@@ -102,6 +104,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         {
             playerSpeed = 0;
             m_myAnim.SetBool("JOG", false);
+            m_myAnim.SetBool("STOP", false);
             m_myAnim.SetBool("KICK", true);
             GameObject m_ball = m_ballPosition.GetChild(0).gameObject;
             m_ball.GetComponent<Rigidbody>().isKinematic = false;
@@ -119,8 +122,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
         //m_nickname.transform.position = new Vector3(transform.position.x, transform.position.y + 4.5f, transform.position.z);
         PlayerMov();
-        m_nicknameTMP.text = gameObject.name;
-        m_nicknameTMP.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
     }
 
     private void OnTriggerStay(Collider p_other)
@@ -286,7 +287,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     {
         yield return new WaitForSeconds(1);
         m_myAnim.SetBool("KICK", false);
-        m_myAnim.SetBool("JOG", true);
+        m_myAnim.SetBool("STOP", true);
         playerSpeed = 12;
         m_canKick = false;
     }
