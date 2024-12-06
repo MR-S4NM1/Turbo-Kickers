@@ -95,7 +95,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
             }
             else
             {
-                deathEvent(m_currentRoleName);
                 LevelNetworkManager.Instance.disconnectFromCurrentRoom();
             }
         }
@@ -168,30 +167,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
 
     #region LocalMethods
 
-    void deathEvent(string role)
-    {
-        if (m_PV.IsMine)
-        {
-            if (role == "Traitor")
-            {
-                byte m_ID = 2;//Codigo del Evento (1...199)
-                object content = role;
-                RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-
-                PhotonNetwork.RaiseEvent(m_ID, content, raiseEventOptions, SendOptions.SendReliable);
-            }
-            else if (role == "Innocent")
-            {
-                byte m_ID = 3;//Codigo del Evento (1...199)
-                object content = role;
-                RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-
-                PhotonNetwork.RaiseEvent(m_ID, content, raiseEventOptions, SendOptions.SendReliable);
-            }
-        }
-    }
-
-
     void PlayerMov()
     {
         if (m_PV.IsMine)
@@ -235,49 +210,36 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
     }
 
-    IEnumerator WaitForParticleSystem()
-    {
-        //PhotonNetwork.Instantiate("Tris Spark 2", this.gameObject.transform.position, Quaternion.identity);
-        //Instantiate(m_particleSystem, this.gameObject.transform.position, Quaternion.identity);
-        m_particleSystem.gameObject.SetActive(true);
-        m_particleSystem.Play();
-        yield return new WaitForSeconds(m_particleSystem.main.duration);
-        deathEvent(m_currentRoleName);
-        LevelManager.instance.getNewInfoGame(gameObject.name);
-        PhotonNetwork.Destroy(gameObject);
-    }
+    //IEnumerator WaitForParticleSystem()
+    //{
+    //    //PhotonNetwork.Instantiate("Tris Spark 2", this.gameObject.transform.position, Quaternion.identity);
+    //    //Instantiate(m_particleSystem, this.gameObject.transform.position, Quaternion.identity);
+    //    m_particleSystem.gameObject.SetActive(true);
+    //    m_particleSystem.Play();
+    //    yield return new WaitForSeconds(m_particleSystem.main.duration);
+    //    LevelManager.instance.getNewInfoGame(gameObject.name);
+    //    PhotonNetwork.Destroy(gameObject);
+    //}
 
     void GetNewGameplayRole()
     {
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("Role", out object role))
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("Team", out object team))
         {
             //LevelManager.AssignRole();
 
-            string m_newPlayerRole = role.ToString();
+            string m_newTeam = team.ToString();
 
-            switch (m_newPlayerRole)
+            switch (m_newTeam)
             {
-                case "Innocent":
-                    //Soy inocente
-                    //gameObject.GetComponentInChildren<TextMeshPro>().text = "Innocent";
-                    m_currentRoleText.text = "Innocent";
-                    m_currentRoleName = "Innocent";
-                    m_currentRoleText.color = Color.blue;
-                    for(int i = 0; i < m_arrowParts.Length; ++i)
-                    {
-                        m_arrowParts[i].GetComponent<MeshRenderer>().material = m_materials[0];
-                    }
-                    break;
-                case "Traitor":
-                    //Soy una rata
-                    //gameObject.GetComponentInChildren<TextMeshPro>().text = "Traitor";
-                    m_currentRoleText.text = "Traitor";
-                    m_currentRoleName = "Traitor";
+                case "Red":
+                    m_currentRoleText.text = "Red Team";
+                    m_currentRoleName = "Red Team";
                     m_currentRoleText.color = Color.red;
-                    for (int i = 0; i < m_arrowParts.Length; ++i)
-                    {
-                        m_arrowParts[i].GetComponent<MeshRenderer>().material = m_materials[1];
-                    }
+                    break;
+                case "Blue":
+                    m_currentRoleText.text = "Blue Team";
+                    m_currentRoleName = "Blue Team";
+                    m_currentRoleText.color = Color.blue;
                     break;
             }
         }

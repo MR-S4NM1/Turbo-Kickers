@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     PhotonView m_PV;
+    [SerializeField] protected TextMeshProUGUI _redScoreText;
+    [SerializeField] protected TextMeshProUGUI _blueScoreText;
 
     private void Awake()
     {

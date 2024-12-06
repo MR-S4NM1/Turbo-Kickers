@@ -44,6 +44,10 @@ MonoBehaviour:
   - showNewGameInfo
   - TakingDamage
   - WinnersInfo
+  - UpdateBlueScore
+  - UpdateRedScore
+  - UpdateBlueTeamScore
+  - UpdateRedTeamScore
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

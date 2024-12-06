@@ -7,7 +7,6 @@ using TMPro;
 public class SpawnerManager : MonoBehaviour
 {
     [SerializeField] Transform m_spawner;
-
     PhotonView m_PV;
 
     private void Start()
@@ -22,18 +21,19 @@ public class SpawnerManager : MonoBehaviour
 
             switch (playerTypeFromHashTable)
             {
-                case "Blue":
+                case "Vexa_A":
                     PhotonNetwork.Instantiate("Vefects_Vexa_A", m_spawner.GetChild(posNum).position, Quaternion.identity);
                     break;
-                case "Red":
+                case "Vexa_B":
                     PhotonNetwork.Instantiate("Vefects_Vexa_B", m_spawner.GetChild(posNum).position, Quaternion.identity);
                     break;
+                case "Vexa_C":
+                    PhotonNetwork.Instantiate("Vefects_Vexa_C", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    break;
+                case "Vexa_D":
+                    PhotonNetwork.Instantiate("Vefects_Vexa_D", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    break;
             }
-        }
-
-        //if (m_PV.IsMine)
-        //{
-        //    PhotonNetwork.Instantiate("LevelManager", transform.position, Quaternion.identity);
-        //}
+        }   
     }
 }

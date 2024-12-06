@@ -17,8 +17,8 @@ public class LevelManager : MonoBehaviourPunCallbacks
 
     [Range(0.1f, 0.2f)][SerializeField] float m_traitorPercentage;
 
-    [SerializeField] int m_traitorsLeft;
-    [SerializeField] int m_innocentsLeft;
+    [SerializeField] int m_redTeamScore;
+    [SerializeField] int m_blueTeamScore;
 
     [SerializeField] GameObject m_victoryPanel;
     [SerializeField] TextMeshProUGUI m_Winnerstext;
@@ -27,17 +27,17 @@ public class LevelManager : MonoBehaviourPunCallbacks
     PhotonView m_photonView;
     LevelManagerState m_currentState;
 
-    public TypeOfPlayer m_typeOfPlayer;
+    public Team m_typeOfPlayer;
 
     private void Awake()
     {
-        if (instance == null)
+        if (instance != null && instance != this)
         {
-            instance = this;
+            Destroy(instance);
         }
         else
         {
-            Destroy(instance);
+            instance = this;
         }
     }
 
@@ -61,7 +61,7 @@ public class LevelManager : MonoBehaviourPunCallbacks
     void setTypeOfPlayer()
     {
         byte m_ID = 1; //Codigo del Evento (1...199)
-        object content = "Asignacion de tipo de jugador";
+        object content = "Asignacion de equipo del jugador";
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
 
@@ -101,17 +101,41 @@ public class LevelManager : MonoBehaviourPunCallbacks
     /// </summary>
     void playing()
     {
-        //assignTypeOfPlayer();
+        assignTeamOfPlayer();
         setTypeOfPlayer();
     }
 
     //Falta asignar cuantos roles hay segun la cantidad de jugadores
-    void assignTypeOfPlayer(TypeOfPlayer p_typeOfPlayer)
+    void assignTeamOfPlayer()
     {
-        m_typeOfPlayer = p_typeOfPlayer;
-        Hashtable playerProperties = new Hashtable();
-        playerProperties["playerType"] = p_typeOfPlayer;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
+        print("Se crea Hastable con la asignacion del equipo");
+        Player[] m_playersArray = PhotonNetwork.PlayerList;
+        List<Team> teams = new List<Team>();
+
+        int totalPlayers = m_playersArray.Length;
+        int redTeamCount = Mathf.Max(1, Mathf.RoundToInt(totalPlayers * 0.5f));
+        int blueTeamCount = totalPlayers - redTeamCount;
+
+        teams.AddRange(Enumerable.Repeat(Team.Red, redTeamCount));
+        teams.AddRange(Enumerable.Repeat(Team.Blue, blueTeamCount));
+
+        m_playersArray = m_playersArray.OrderBy(x => Random.value).ToArray();
+
+        for (int i = 0; i < m_playersArray.Length; i++)
+        {
+            if (i % 2 == 0)
+            {
+                Hashtable m_playerProperties = new Hashtable();
+                m_playerProperties["Team"] = teams[0].ToString();
+                m_playersArray[i].SetCustomProperties(m_playerProperties);
+            }
+            else if(i % 2 == 1)
+            {
+                Hashtable m_playerProperties = new Hashtable();
+                m_playerProperties["Team"] = teams[1].ToString();
+                m_playersArray[i].SetCustomProperties(m_playerProperties);
+            }
+        }
     }
 
     [PunRPC]
@@ -124,8 +148,10 @@ public class LevelManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        if (PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+        if (PhotonNetwork.CurrentRoom.PlayerCount >= PhotonNetwork.CurrentRoom.MaxPlayers)
         {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
             StartCoroutine(timerToStart());
         }
     }
@@ -150,6 +176,28 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_photonView.RPC("showNewGameInfo", RpcTarget.All, p_playerInfo);
     }
 
+    public void UpdateRedScore()
+    {
+        m_photonView.RPC("UpdateRedTeamScore", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void UpdateRedTeamScore()
+    {
+        m_redTeamScore++;
+    } 
+
+    public void UpdateBlueScore()
+    {
+        m_photonView.RPC("UpdateBlueTeamScore", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void UpdateBlueTeamScore()
+    {
+
+    }
+
 }
 public enum LevelManagerState
 {
@@ -160,10 +208,8 @@ public enum LevelManagerState
 }
 
 
-public enum TypeOfPlayer
+public enum Team
 {
     Blue,
-    Red,
-    Green,
-    Yellow
+    Red
 }

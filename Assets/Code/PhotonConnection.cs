@@ -218,13 +218,25 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
 
     public void setPlayerA()
     {
-        setTypeOfPlayer(TypeOfPlayerMenu.Red);
+        setTypeOfPlayer(TypeOfPlayerMenu.Vexa_A);
         userHasChosenPlayerType = true;
     }
 
     public void setPlayerB()
     {
-        setTypeOfPlayer(TypeOfPlayerMenu.Blue);
+        setTypeOfPlayer(TypeOfPlayerMenu.Vexa_B);
+        userHasChosenPlayerType = true;
+    }
+
+    public void setPlayerC()
+    {
+        setTypeOfPlayer(TypeOfPlayerMenu.Vexa_C);
+        userHasChosenPlayerType = true;
+    }
+
+    public void setPlayerD()
+    {
+        setTypeOfPlayer(TypeOfPlayerMenu.Vexa_D);
         userHasChosenPlayerType = true;
     }
 
@@ -233,7 +245,6 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_typeOfPlayerMenu = p_typeOfPlayer;
         Hashtable playerProperties = new Hashtable();
         playerProperties["playerType"] = p_typeOfPlayer.ToString();
-        print("Soy: " + p_typeOfPlayer.ToString());
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
     }
 
@@ -259,9 +270,9 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
 
 public enum TypeOfPlayerMenu
 {
-    Blue,
-    Red,
-    Green,
-    Yellow
+    Vexa_A,
+    Vexa_B,
+    Vexa_C,
+    Vexa_D
 }
 
