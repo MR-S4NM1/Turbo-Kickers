@@ -24,16 +24,14 @@ public class Ball : MonoBehaviour
         }
     }
 
-    [PunRPC]
     void UpdateRedScore()
     {
-        LevelManager.instance.UpdateRedScore();
+        LevelManager.instance.updateRedScore();
     }
 
-    [PunRPC]
     void UpdateBlueScore()
     {
-        LevelManager.instance.UpdateBlueScore();
+        LevelManager.instance.updateBlueScore();
     }
 
 }

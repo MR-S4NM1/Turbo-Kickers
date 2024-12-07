@@ -8,36 +8,60 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class LevelManager : MonoBehaviourPunCallbacks
 {
     public static LevelManager instance;
 
-    [SerializeField] TextMeshProUGUI m_gameInfo;
-
-    [Range(0.1f, 0.2f)][SerializeField] float m_traitorPercentage;
-
-    [SerializeField] int m_redTeamScore;
-    [SerializeField] int m_blueTeamScore;
-
+    [Header("UI")]
     [SerializeField] GameObject m_victoryPanel;
-    [SerializeField] TextMeshProUGUI m_Winnerstext;
+    [SerializeField] TextMeshProUGUI m_winnerstext;
     [SerializeField] GameObject m_exitButton;
+    [SerializeField] TextMeshProUGUI m_gameInfo;
+    [SerializeField] TextMeshProUGUI m_blueTeamScoreTMP;
+    [SerializeField] TextMeshProUGUI m_redTeamScoreTMP;
+    [SerializeField] TextMeshProUGUI m_firstTimerTimeTMP;
+    [SerializeField] TextMeshProUGUI m_secondTimerTimeTMP;
+
+    [Header("Score")]
+    [SerializeField] protected int m_redTeamScore;
+    [SerializeField] protected int m_blueTeamScore;
+
+    [Header("Time")]
+    [SerializeField] protected int m_firstTimerTime;
+    [SerializeField] protected int m_secondTimerTime;
+
+    [Header("Cinemachine")]
+    [SerializeField] protected CinemachineTargetGroup targetGroup;
+    [SerializeField] protected CinemachineImpulseSource m_impulseSource;
 
     PhotonView m_photonView;
     LevelManagerState m_currentState;
 
     public Team m_typeOfPlayer;
 
+    //private void Awake()
+    //{
+    //    if (instance != null && instance != this)
+    //    {
+    //        Destroy(instance);
+    //    }
+    //    else
+    //    {
+    //        instance = this;
+    //    }
+    //}
+
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (instance == null)
         {
-            Destroy(instance);
+            instance = this;
         }
         else
         {
-            instance = this;
+            Destroy(instance);
         }
     }
 
@@ -45,23 +69,34 @@ public class LevelManager : MonoBehaviourPunCallbacks
     {
         m_photonView = GetComponent<PhotonView>();
 
-        //if (PhotonNetwork.IsMasterClient)
-        //{
-        //    print("Soy el master client");
-        //}
-
         m_victoryPanel.SetActive(false);
         m_exitButton.SetActive(false);
         setLevelManagerSate(LevelManagerState.Waiting);
+
+        m_redTeamScoreTMP.text = "Red: " + 0;
+        m_redTeamScoreTMP.color = Color.red;
+        m_blueTeamScoreTMP.text = "Blue: " + 0;
+        m_blueTeamScoreTMP.color = Color.blue;
     }
 
     /// <summary>
     /// Levanta el Evento cuando los jugadores esten listos para la partida
     /// </summary>
-    void setTypeOfPlayer()
+    protected void setTypeOfPlayer()
     {
         byte m_ID = 1; //Codigo del Evento (1...199)
-        object content = "Asignacion de equipo del jugador";
+        object content = "Team where the player will be.";
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+
+        PhotonNetwork.RaiseEvent(m_ID, content, raiseEventOptions, SendOptions.SendReliable);
+    }
+
+    protected void vibrationOfTheCamera()
+    {
+        byte m_ID = 2; //Codigo del Evento (1...199)
+
+        object content = "Impulse.";
 
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
 
@@ -92,21 +127,22 @@ public class LevelManager : MonoBehaviourPunCallbacks
                 playing();
                 break;
             case LevelManagerState.Finishing:
-                m_photonView.RPC("activateExitButton", RpcTarget.All);
+                checkWinnersAndUpdateUI();
                 break;
         }
     }
     /// <summary>
     /// Inicializa el estado de Playing
     /// </summary>
-    void playing()
+    protected void playing()
     {
         assignTeamOfPlayer();
         setTypeOfPlayer();
+        StartCoroutine(timeToFinishGame());
     }
 
     //Falta asignar cuantos roles hay segun la cantidad de jugadores
-    void assignTeamOfPlayer()
+    protected void assignTeamOfPlayer()
     {
         print("Se crea Hastable con la asignacion del equipo");
         Player[] m_playersArray = PhotonNetwork.PlayerList;
@@ -119,7 +155,7 @@ public class LevelManager : MonoBehaviourPunCallbacks
         teams.AddRange(Enumerable.Repeat(Team.Red, redTeamCount));
         teams.AddRange(Enumerable.Repeat(Team.Blue, blueTeamCount));
 
-        m_playersArray = m_playersArray.OrderBy(x => Random.value).ToArray();
+        //m_playersArray = m_playersArray.OrderBy(x => Random.value).ToArray();
 
         for (int i = 0; i < m_playersArray.Length; i++)
         {
@@ -138,14 +174,6 @@ public class LevelManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void activateExitButton()
-    {
-        m_victoryPanel.SetActive(true);
-        m_exitButton.SetActive(true);
-        Cursor.visible = true;
-    }
-
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         if (PhotonNetwork.CurrentRoom.PlayerCount >= PhotonNetwork.CurrentRoom.MaxPlayers)
@@ -156,47 +184,129 @@ public class LevelManager : MonoBehaviourPunCallbacks
         }
     }
 
-    //Probablemente Se necesite RPC
-    IEnumerator timerToStart()
+    protected IEnumerator timerToStart()
     {
-        yield return new WaitForSeconds(3);
+        while(m_firstTimerTime > 0)
+        {
+            print("WE CAN START!");
+            yield return new WaitForSeconds(1);
+            m_photonView.RPC("updateFirstTimer", RpcTarget.AllBuffered);
+        }
+        //m_photonView.RPC("deactivateFirstTimer", RpcTarget.All);
         setLevelManagerSate(LevelManagerState.Playing);
     }
 
-    [PunRPC]
-    void WinnersInfo(string p_winners, Color p_winnersColor)
+    protected IEnumerator timeToFinishGame()
     {
-        m_gameInfo.text = "";
-        m_Winnerstext.text = p_winners;
-        m_Winnerstext.color = p_winnersColor;
+        while (m_secondTimerTime > 0)
+        {
+            print("WE CAN FINISH AHHHHHHHHHHHHHHHHHHH!");
+            yield return new WaitForSeconds(1);
+            m_photonView.RPC("updateSecondTimer", RpcTarget.AllBuffered);
+        }
+        //m_photonView.RPC("deactivateSecondTimer", RpcTarget.All);
+        setLevelManagerSate(LevelManagerState.Finishing);
+    }
+
+    [PunRPC]
+    protected void updateFirstTimer()
+    {
+        m_firstTimerTime -= 1;
+        m_firstTimerTimeTMP.text = "Time: " + m_firstTimerTime.ToString();
+    }
+
+    [PunRPC]
+    protected void deactivateFirstTimer()
+    {
+        m_firstTimerTimeTMP.gameObject.SetActive(false);
+    }
+
+
+    [PunRPC]
+    protected void updateSecondTimer()
+    {
+        m_secondTimerTime -= 1;
+        m_secondTimerTimeTMP.text = "Time: " + m_secondTimerTime.ToString();
+    }
+
+    [PunRPC]
+    protected void deactivateSecondTimer()
+    {
+        m_secondTimerTimeTMP.gameObject.SetActive(false);
+    }
+
+    [PunRPC]
+    protected void winnersInfo(string p_winners, Color p_winnersColor)
+    {
+        m_winnerstext.text = p_winners;
+        m_winnerstext.color = p_winnersColor;
+        print(m_winnerstext.text);
+    }
+
+    protected void checkWinnersAndUpdateUI()
+    {
+        if(m_blueTeamScore > m_redTeamScore)
+        {
+            m_photonView.RPC("winnersInfo", RpcTarget.All, "Blue team has won!", Color.blue);
+        }
+        else if(m_redTeamScore > m_blueTeamScore)
+        {
+            m_photonView.RPC("winnersInfo", RpcTarget.All, "Red team has won!", Color.red);
+        }
+        else
+        {
+            m_photonView.RPC("winnersInfo", RpcTarget.All, "Tie!", Color.white);
+        }
+
+        m_victoryPanel.SetActive(true);
+        m_exitButton.SetActive(true);
+        Cursor.visible = true;
     }
 
     public void getNewInfoGame(string p_playerInfo)
     {
-        m_photonView.RPC("showNewGameInfo", RpcTarget.All, p_playerInfo);
+        m_photonView.RPC("showFirstTimerInfo", RpcTarget.All, p_playerInfo);
     }
 
-    public void UpdateRedScore()
+    public void updateRedScore()
     {
-        m_photonView.RPC("UpdateRedTeamScore", RpcTarget.All);
+        m_photonView.RPC("updateRedTeamScore", RpcTarget.All);
     }
 
     [PunRPC]
-    void UpdateRedTeamScore()
+    protected void updateRedTeamScore()
     {
-        m_redTeamScore++;
+        m_redTeamScore += 1;
+        m_redTeamScoreTMP.text = "Red: " + m_redTeamScore.ToString();
+        vibrationOfTheCamera();
     } 
 
-    public void UpdateBlueScore()
+    public void updateBlueScore()
     {
-        m_photonView.RPC("UpdateBlueTeamScore", RpcTarget.All);
+        m_photonView.RPC("updateBlueTeamScore", RpcTarget.All);
     }
 
     [PunRPC]
-    void UpdateBlueTeamScore()
+    protected void updateBlueTeamScore()
     {
-
+        m_blueTeamScore += 1;
+        m_blueTeamScoreTMP.text = "Blue: " + m_blueTeamScore.ToString();
+        vibrationOfTheCamera();
     }
+
+
+    //public void AddPlayerToCinemachineTargetGroup(Transform playerTransform)
+    //{
+    //    print(playerTransform.gameObject.name);
+    //    m_photonView.RPC("addPlayerToCMTG", RpcTarget.AllBuffered, playerTransform);
+    //}
+
+    //[PunRPC]
+    //protected void addPlayerToCMTG(Transform playerTransform)
+    //{
+    //    print(playerTransform.gameObject.name);
+    //    targetGroup.AddMember(playerTransform, 1, 0);
+    //}
 
 }
 public enum LevelManagerState

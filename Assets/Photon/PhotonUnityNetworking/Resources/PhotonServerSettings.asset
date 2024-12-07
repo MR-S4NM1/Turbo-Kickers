@@ -48,6 +48,15 @@ MonoBehaviour:
   - UpdateRedScore
   - UpdateBlueTeamScore
   - UpdateRedTeamScore
+  - showFirstTimerInfo
+  - updateBlueTeamScore
+  - updateRedTeamScore
+  - winnersInfo
+  - updateFirstTimer
+  - updateSecondTimer
+  - deactivateFirstTimer
+  - deactivateSecondTimer
+  - addPlayerToCMTG
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

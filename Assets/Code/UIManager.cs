@@ -9,21 +9,31 @@ public class UIManager : MonoBehaviour
     /// Author: Miguel Angel Garcia Elizalde y Alan Elias Carpinteyro Gastelum.
     /// Brief: Código del la interfaz de usuario (UI).
 
-    public static UIManager Instance;
+    public static UIManager instance;
 
     PhotonView m_PV;
-    [SerializeField] protected TextMeshProUGUI _redScoreText;
-    [SerializeField] protected TextMeshProUGUI _blueScoreText;
+
+    //private void Awake()
+    //{
+    //    if (instance != null && instance != this)
+    //    {
+    //        Destroy(instance);
+    //    }
+    //    else
+    //    {
+    //        instance = this;
+    //    }
+    //}
 
     private void Awake()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
         }
         else
         {
-            Destroy(Instance);
+            Destroy(instance);
         }
     }
 

@@ -181,14 +181,14 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         m_titlePanel.SetActive(false);
         m_setupPanel.SetActive(true);
 
-        m_newRoomName.gameObject.SetActive(true);
-        m_newNickname.gameObject.SetActive(true);
+        //m_newRoomName.gameObject.SetActive(true);
+        //m_newNickname.gameObject.SetActive(true);
 
-        m_playButton.gameObject.SetActive(false);
-        m_exitButton.gameObject.SetActive(false);
-        m_backButton.gameObject.SetActive(true);
-        m_vsModeButton.gameObject.SetActive(true);
-        m_creditsTextMeshProUGUI.gameObject.SetActive(true);
+        //m_playButton.gameObject.SetActive(false);
+        //m_exitButton.gameObject.SetActive(false);
+        //m_backButton.gameObject.SetActive(true);
+        //m_vsModeButton.gameObject.SetActive(true);
+        //m_creditsTextMeshProUGUI.gameObject.SetActive(true);
         userHasChosenPlayerType = false;
 
         //m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
@@ -203,17 +203,17 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
 
     public void BackButton()
     {
-        m_creditsTextMeshProUGUI.gameObject.SetActive(false);
+        //m_creditsTextMeshProUGUI.gameObject.SetActive(false);
         m_titlePanel.SetActive(true);
         m_setupPanel.SetActive(false);
 
-        m_newRoomName.gameObject.SetActive(false);
-        m_newNickname.gameObject.SetActive(false);
+        //m_newRoomName.gameObject.SetActive(false);
+        //m_newNickname.gameObject.SetActive(false);
 
-        m_playButton.gameObject.SetActive(true);
-        m_exitButton.gameObject.SetActive(true);
-        m_backButton.gameObject.SetActive(false);
-        m_vsModeButton.gameObject.SetActive(false);
+        //m_playButton.gameObject.SetActive(true);
+        //m_exitButton.gameObject.SetActive(true);
+        //m_backButton.gameObject.SetActive(false);
+        //m_vsModeButton.gameObject.SetActive(false);
     }
 
     public void setPlayerA()

@@ -16,22 +16,20 @@ using Cinemachine;
 public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     #region References
 
+    [Header("Cinemachine")]
+    [SerializeField] protected CinemachineImpulseSource m_cmImpulseSource;
+    [SerializeField] protected Camera _camera;
+
+    [Header("Player Componentes")]
     [SerializeField] protected Rigidbody rb;
     //[SerializeField] TextMeshPro m_nickname;
     [SerializeField] protected Animator m_myAnim;
 
-    [SerializeField] Transform m_cam;
-    [SerializeField] BoxCollider m_boxCollider;
-    [SerializeField] GameObject m_triggerCollision;
-    [SerializeField] ParticleSystem m_particleSystem;
-
     [Header("UI Player")]
-    [SerializeField] TextMeshProUGUI m_currentRoleText;
+    [SerializeField] TextMeshProUGUI m_currentTeamText;
     [SerializeField] TextMeshPro m_nicknameTMP;
 
-    [SerializeField] protected string m_currentRoleName;
-    [SerializeField] public GameObject[] m_arrowParts;
-    [SerializeField] public Material[] m_materials;
+    [SerializeField] protected string m_currentTeamName;
 
     [Header("Ball")]
     [SerializeField] protected Transform m_ballPosition;
@@ -70,11 +68,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         m_myAnim.SetBool("JOG", false);
         m_myAnim.SetBool("STOP", true);
         PhotonPeer.RegisterType(typeof(Color), (byte)'C', TypeTransformer.SerializeColor, TypeTransformer.DeserializeColor);
-        m_boxCollider.enabled = false;
-        m_triggerCollision.SetActive(true);
-        m_particleSystem.gameObject.SetActive(false);
-        m_currentRoleText.text = "Role...";
+        m_currentTeamText.text = "Team...";
         m_nicknameTMP.text = gameObject.name;
+
+        m_cmImpulseSource = FindObjectOfType<CinemachineImpulseSource>();
+
+        //LevelManager.instance.AddPlayerToCinemachineTargetGroup(this.gameObject.transform);
     }
 
     private void Update()
@@ -89,14 +88,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if(m_currentRoleName == "")
-            {
-                LevelNetworkManager.Instance.disconnectFromCurrentRoom();
-            }
-            else
-            {
-                LevelNetworkManager.Instance.disconnectFromCurrentRoom();
-            }
+            LevelNetworkManager.Instance.disconnectFromCurrentRoom();
         }
 
         if (Input.GetKeyDown(KeyCode.K) && m_canKick)
@@ -154,9 +146,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         switch (eventCode)
         {
             case 1: // Evento de asignación de roles.
-                GetNewGameplayRole();
+                getNewGameplayRole();
                 break;
-            case 2:
+            case 2: // Evento de vibración de la cámara.
+                cameraShake();
                 break;
             case 3:
                 break;
@@ -202,26 +195,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
     }
 
-    void ShowNickname(string p_nickname)
-    {
-        if (m_PV.IsMine)
-        {
-            gameObject.GetComponentInChildren<TextMeshPro>().text = p_nickname;
-        }
-    }
-
-    //IEnumerator WaitForParticleSystem()
-    //{
-    //    //PhotonNetwork.Instantiate("Tris Spark 2", this.gameObject.transform.position, Quaternion.identity);
-    //    //Instantiate(m_particleSystem, this.gameObject.transform.position, Quaternion.identity);
-    //    m_particleSystem.gameObject.SetActive(true);
-    //    m_particleSystem.Play();
-    //    yield return new WaitForSeconds(m_particleSystem.main.duration);
-    //    LevelManager.instance.getNewInfoGame(gameObject.name);
-    //    PhotonNetwork.Destroy(gameObject);
-    //}
-
-    void GetNewGameplayRole()
+    void getNewGameplayRole()
     {
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("Team", out object team))
         {
@@ -232,17 +206,22 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
             switch (m_newTeam)
             {
                 case "Red":
-                    m_currentRoleText.text = "Red Team";
-                    m_currentRoleName = "Red Team";
-                    m_currentRoleText.color = Color.red;
+                    m_currentTeamText.text = "Red Team";
+                    m_currentTeamName = "Red Team";
+                    m_currentTeamText.color = Color.red;
                     break;
                 case "Blue":
-                    m_currentRoleText.text = "Blue Team";
-                    m_currentRoleName = "Blue Team";
-                    m_currentRoleText.color = Color.blue;
+                    m_currentTeamText.text = "Blue Team";
+                    m_currentTeamName = "Blue Team";
+                    m_currentTeamText.color = Color.blue;
                     break;
             }
         }
+    }
+
+    void cameraShake()
+    {
+        m_cmImpulseSource.GenerateImpulse();
     }
 
     protected IEnumerator cooldownTimer()
