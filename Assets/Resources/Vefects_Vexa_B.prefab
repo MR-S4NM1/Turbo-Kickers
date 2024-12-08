@@ -3485,19 +3485,19 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: JOG
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: STOP
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: KICK
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: MovingFloat
   m_SynchronizeLayers:
-  - SynchronizeType: 1
+  - SynchronizeType: 2
     LayerIndex: 0
 --- !u!114 &5359688730909781529
 MonoBehaviour:

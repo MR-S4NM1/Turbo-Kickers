@@ -157,7 +157,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
             print("Debe ser par");
             return;
         }
-        else if(int.Parse(m_newNumberOfPlayer.text) % 2 == 0)
+        else if((int.Parse(m_newNumberOfPlayer.text) % 2 == 0) && (int.Parse(m_newNumberOfPlayer.text) < 11))
         {
             if (m_newRoomName.text == "")
             {

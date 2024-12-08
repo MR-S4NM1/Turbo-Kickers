@@ -57,6 +57,9 @@ MonoBehaviour:
   - deactivateFirstTimer
   - deactivateSecondTimer
   - addPlayerToCMTG
+  - SyncBall
+  - activateOrDeactivateBall
+  - updateCurrentPlayers
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

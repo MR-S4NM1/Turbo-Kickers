@@ -15,15 +15,18 @@ public class LevelManager : MonoBehaviourPunCallbacks
     public static LevelManager instance;
 
     [Header("UI")]
-    [SerializeField] GameObject m_victoryPanel;
-    [SerializeField] TextMeshProUGUI m_winnerstext;
-    [SerializeField] GameObject m_exitButton;
-    [SerializeField] TextMeshProUGUI m_gameInfo;
-    [SerializeField] TextMeshProUGUI m_blueTeamScoreTMP;
-    [SerializeField] TextMeshProUGUI m_redTeamScoreTMP;
-    [SerializeField] TextMeshProUGUI m_firstTimerTimeTMP;
-    [SerializeField] TextMeshProUGUI m_secondTimerTimeTMP;
-
+    [SerializeField] protected GameObject m_victoryPanel;
+    [SerializeField] protected TextMeshProUGUI m_winnerstext;
+    [SerializeField] protected GameObject m_exitButton;
+    [SerializeField] protected TextMeshProUGUI m_gameInfo;
+    [SerializeField] protected TextMeshProUGUI m_blueTeamScoreTMP;
+    [SerializeField] protected TextMeshProUGUI m_redTeamScoreTMP;
+    [SerializeField] protected TextMeshProUGUI m_firstTimerTimeTMP;
+    [SerializeField] protected TextMeshProUGUI m_secondTimerTimeTMP;
+    [SerializeField] protected List<TextMeshProUGUI> m_playersNamesList;
+    [SerializeField] protected GameObject m_playersListPanel;
+    [SerializeField] protected GameObject m_gamePanel;
+    
     [Header("Score")]
     [SerializeField] protected int m_redTeamScore;
     [SerializeField] protected int m_blueTeamScore;
@@ -35,6 +38,12 @@ public class LevelManager : MonoBehaviourPunCallbacks
     [Header("Cinemachine")]
     [SerializeField] protected CinemachineTargetGroup targetGroup;
     [SerializeField] protected CinemachineImpulseSource m_impulseSource;
+
+    [Header("Ball")]
+    [SerializeField] protected Ball m_ball;
+
+    [Header("Players")]
+    [SerializeField] public bool m_playersCanMove;
 
     PhotonView m_photonView;
     LevelManagerState m_currentState;
@@ -70,6 +79,8 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_photonView = GetComponent<PhotonView>();
 
         m_victoryPanel.SetActive(false);
+        m_gamePanel.SetActive(true);
+        m_playersListPanel.SetActive(false);
         m_exitButton.SetActive(false);
         setLevelManagerSate(LevelManagerState.Waiting);
 
@@ -77,6 +88,8 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_redTeamScoreTMP.color = Color.red;
         m_blueTeamScoreTMP.text = "Blue: " + 0;
         m_blueTeamScoreTMP.color = Color.blue;
+
+        m_photonView.RPC("activateOrDeactivateBall", RpcTarget.AllBuffered, false);
     }
 
     /// <summary>
@@ -138,6 +151,8 @@ public class LevelManager : MonoBehaviourPunCallbacks
     {
         assignTeamOfPlayer();
         setTypeOfPlayer();
+        m_photonView.RPC("activateOrDeactivateBall", RpcTarget.AllBuffered, true);
+        m_photonView.RPC("updateCurrentPlayers", RpcTarget.AllBuffered);
         StartCoroutine(timeToFinishGame());
     }
 
@@ -200,7 +215,6 @@ public class LevelManager : MonoBehaviourPunCallbacks
     {
         while (m_secondTimerTime > 0)
         {
-            print("WE CAN FINISH AHHHHHHHHHHHHHHHHHHH!");
             yield return new WaitForSeconds(1);
             m_photonView.RPC("updateSecondTimer", RpcTarget.AllBuffered);
         }
@@ -279,6 +293,10 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_redTeamScore += 1;
         m_redTeamScoreTMP.text = "Red: " + m_redTeamScore.ToString();
         vibrationOfTheCamera();
+        m_ball.gameObject.transform.position = new Vector3(0.0f, 0.8f, -0.35f);
+        m_ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        m_ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        m_ball.m_hasEnteredTheRedGoal = false;
     } 
 
     public void updateBlueScore()
@@ -292,6 +310,52 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_blueTeamScore += 1;
         m_blueTeamScoreTMP.text = "Blue: " + m_blueTeamScore.ToString();
         vibrationOfTheCamera();
+        m_ball.gameObject.transform.position = new Vector3(0.0f, 0.8f, -0.35f);
+        m_ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        m_ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        m_ball.m_hasEnteredTheBlueGoal = false;
+    }
+
+    [PunRPC]
+    protected void activateOrDeactivateBall(bool isActivated)
+    {
+        m_playersCanMove = isActivated;
+        m_ball.gameObject.SetActive(isActivated);
+    }
+
+    [PunRPC]
+    void updateCurrentPlayers()
+    {
+        int index = 0;
+        Dictionary<int, Photon.Realtime.Player> playersList = Photon.Pun.PhotonNetwork.CurrentRoom.Players;
+        foreach (KeyValuePair<int, Photon.Realtime.Player> player in playersList)
+        {
+            if(index < playersList.Count)
+            {
+                print(player.Value.NickName);
+                m_playersNamesList[index].text = player.Value.NickName;
+                m_playersNamesList[index].gameObject.transform.parent.GetComponent<Image>().enabled = true;
+                index++;
+            }
+            else
+            {
+                m_playersNamesList[index].text = string.Empty;
+            }
+        }
+    }
+
+    public void showPlayersList(bool isShowingList)
+    {
+        if(isShowingList)
+        {
+            m_gamePanel.gameObject.SetActive(false);
+            m_playersListPanel.gameObject.SetActive(true);
+        }
+        else
+        {
+            m_gamePanel.gameObject.SetActive(true);
+            m_playersListPanel.gameObject.SetActive(false);
+        }
     }
 
 

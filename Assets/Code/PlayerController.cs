@@ -6,10 +6,8 @@ using TMPro;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using Unity.VisualScripting;
 using System.Linq;
 using UnityEngine.UI;
-using Photon.Pun.Demo.PunBasics;
 using Cinemachine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -103,6 +101,15 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
             m_ball.GetComponent<Rigidbody>().AddForce(transform.forward * m_kickForce, ForceMode.Impulse);
             StartCoroutine(cooldownTimer());
         }
+
+        if (Input.GetKey(KeyCode.Tab))
+        {
+            LevelManager.instance.showPlayersList(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            LevelManager.instance.showPlayersList(false);
+        }
     }
 
     private void FixedUpdate()
@@ -117,6 +124,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
 
     private void OnTriggerStay(Collider p_other)
     {
+        if (!m_PV.IsMine)
+        {
+            return;
+        }
         if (p_other.gameObject.CompareTag("Ball") && !m_canKick)
         {
             p_other.GetComponent<Rigidbody>().isKinematic = true;
@@ -162,6 +173,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
 
     void PlayerMov()
     {
+        if (!LevelManager.instance.m_playersCanMove)
+        {
+            return;
+        }
         if (m_PV.IsMine)
         {
             playerInputHorizontal = Input.GetAxisRaw("Horizontal");
@@ -209,11 +224,13 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
                     m_currentTeamText.text = "Red Team";
                     m_currentTeamName = "Red Team";
                     m_currentTeamText.color = Color.red;
+                    this.gameObject.transform.position = new Vector3(Random.Range(5, 15), 0.0f, Random.Range(-12, 12));
                     break;
                 case "Blue":
                     m_currentTeamText.text = "Blue Team";
                     m_currentTeamName = "Blue Team";
                     m_currentTeamText.color = Color.blue;
+                    this.gameObject.transform.position = new Vector3(Random.Range(-5, -15), 0.0f, Random.Range(-12, 12));
                     break;
             }
         }

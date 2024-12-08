@@ -6,7 +6,6 @@ using TMPro;
 
 public class SpawnerManager : MonoBehaviour
 {
-    [SerializeField] Transform m_spawner;
     PhotonView m_PV;
 
     private void Start()
@@ -17,21 +16,19 @@ public class SpawnerManager : MonoBehaviour
         {
             string playerTypeFromHashTable = (string)playerType;
 
-            int posNum = Random.Range(0, m_spawner.childCount);
-
             switch (playerTypeFromHashTable)
             {
                 case "Vexa_A":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_A", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_A", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
                     break;
                 case "Vexa_B":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_B", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_B", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
                     break;
                 case "Vexa_C":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_C", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_C", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
                     break;
                 case "Vexa_D":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_D", m_spawner.GetChild(posNum).position, Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_D", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
                     break;
             }
         }   
