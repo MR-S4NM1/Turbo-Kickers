@@ -224,13 +224,13 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
                     m_currentTeamText.text = "Red Team";
                     m_currentTeamName = "Red Team";
                     m_currentTeamText.color = Color.red;
-                    this.gameObject.transform.position = new Vector3(Random.Range(5, 15), 0.0f, Random.Range(-12, 12));
+                    this.gameObject.transform.position = new Vector3(Random.Range(-10, 11), 0.0f, Random.Range(-5, -16));
                     break;
                 case "Blue":
                     m_currentTeamText.text = "Blue Team";
                     m_currentTeamName = "Blue Team";
                     m_currentTeamText.color = Color.blue;
-                    this.gameObject.transform.position = new Vector3(Random.Range(-5, -15), 0.0f, Random.Range(-12, 12));
+                    this.gameObject.transform.position = new Vector3(Random.Range(-10, 11), 0.0f, Random.Range(5, 16));
                     break;
             }
         }

@@ -20,7 +20,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     [SerializeField] TMP_InputField m_newRoomName;
     [SerializeField] TMP_InputField m_newNumberOfPlayer;
 
-    [Header("All error messages")]
+    [Header("All TextMeshProUGUI")]
     [SerializeField] TextMeshProUGUI m_joinRoomFailedTextMeshProUGUI;
     [SerializeField] TextMeshProUGUI m_createRoomFailedTextMeshProUGUI;
     [SerializeField] TextMeshProUGUI m_nicknameFailedTextMeshProUGUI;
@@ -91,8 +91,8 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         print("Hubo un error al entrar el room: " + message);
-        /*m_joinRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
-        m_joinRoomFailedTextMeshProUGUI.text = "Hubo un error al entrar al room: " + m_roomInputField.text;*/
+        m_joinRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+        m_joinRoomFailedTextMeshProUGUI.text = "Hubo un error al entrar al room: " + m_newRoomName.text;
     }
 
     RoomOptions NewRoomInfo(int p_maxPlayersInThisRoom)
@@ -121,8 +121,8 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
 
         if (m_newRoomName.text == "")
         {
-            //m_joinRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
-            //m_joinRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+            m_joinRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
+            m_joinRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
         }
         else
         {
@@ -161,8 +161,8 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         {
             if (m_newRoomName.text == "")
             {
-                //m_createRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
-                //m_createRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+                m_createRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
+                m_createRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
             }
             else
             {

@@ -19,16 +19,16 @@ public class SpawnerManager : MonoBehaviour
             switch (playerTypeFromHashTable)
             {
                 case "Vexa_A":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_A", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_A", new Vector3(Random.Range(-12, 12), 0.0f, Random.Range(-15, 15)), Quaternion.identity);
                     break;
                 case "Vexa_B":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_B", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_B", new Vector3(Random.Range(-12, 12), 0.0f, Random.Range(-15, 15)), Quaternion.identity);
                     break;
                 case "Vexa_C":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_C", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_C", new Vector3(Random.Range(-12, 12), 0.0f, Random.Range(-15, 15)), Quaternion.identity);
                     break;
                 case "Vexa_D":
-                    PhotonNetwork.Instantiate("Vefects_Vexa_D", new Vector3(Random.Range(-15, 15), 0.0f, Random.Range(-12, 12)), Quaternion.identity);
+                    PhotonNetwork.Instantiate("Vefects_Vexa_D", new Vector3(Random.Range(-12, 12), 0.0f, Random.Range(-15, 15)), Quaternion.identity);
                     break;
             }
         }   

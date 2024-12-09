@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 51775312}
   m_Layer: 0
   m_Name: RedGoal
-  m_TagString: RedGoal
+  m_TagString: BlueGoal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4544,7 +4544,7 @@ GameObject:
   - component: {fileID: 2091659612}
   m_Layer: 0
   m_Name: BlueGoal
-  m_TagString: BlueGoal
+  m_TagString: RedGoal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
