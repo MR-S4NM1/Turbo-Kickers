@@ -33,6 +33,11 @@ public class Ball : MonoBehaviour
             }
             UpdateBlueScore();
         }
+
+        if (other.gameObject.CompareTag("SideWall"))
+        {
+            this.gameObject.transform.position = new Vector3();
+        }
     }
 
     void UpdateRedScore()

@@ -3354,6 +3354,7 @@ MonoBehaviour:
   m_ballPosition: {fileID: 3089731710569499589}
   m_kickForce: 20
   m_canKick: 0
+  m_ballOfTheGame: {fileID: 0}
   playerSpeed: 12
   playerInputHorizontal: 0
   playerInputForward: 0

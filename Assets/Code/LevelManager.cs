@@ -45,6 +45,10 @@ public class LevelManager : MonoBehaviourPunCallbacks
     [Header("Players")]
     [SerializeField] public bool m_playersCanMove;
 
+    [Header("Particle Systems")]
+    [SerializeField] ParticleSystem m_redParticleSystem;
+    [SerializeField] ParticleSystem m_blueParticleSystem;
+
     PhotonView m_photonView;
     LevelManagerState m_currentState;
 
@@ -77,6 +81,9 @@ public class LevelManager : MonoBehaviourPunCallbacks
     void Start()
     {
         m_photonView = GetComponent<PhotonView>();
+
+        m_blueParticleSystem.gameObject.SetActive(false);
+        m_redParticleSystem.gameObject.SetActive(false);
 
         m_victoryPanel.SetActive(false);
         m_gamePanel.SetActive(true);
@@ -156,7 +163,6 @@ public class LevelManager : MonoBehaviourPunCallbacks
         StartCoroutine(timeToFinishGame());
     }
 
-    //Falta asignar cuantos roles hay segun la cantidad de jugadores
     protected void assignTeamOfPlayer()
     {
         print("Se crea Hastable con la asignacion del equipo");
@@ -170,22 +176,13 @@ public class LevelManager : MonoBehaviourPunCallbacks
         teams.AddRange(Enumerable.Repeat(Team.Red, redTeamCount));
         teams.AddRange(Enumerable.Repeat(Team.Blue, blueTeamCount));
 
-        //m_playersArray = m_playersArray.OrderBy(x => Random.value).ToArray();
+        teams = teams.OrderBy(x => Random.value).ToList();
 
         for (int i = 0; i < m_playersArray.Length; i++)
         {
-            if (i % 2 == 0)
-            {
-                Hashtable m_playerProperties = new Hashtable();
-                m_playerProperties["Team"] = teams[0].ToString();
-                m_playersArray[i].SetCustomProperties(m_playerProperties);
-            }
-            else if(i % 2 == 1)
-            {
-                Hashtable m_playerProperties = new Hashtable();
-                m_playerProperties["Team"] = teams[1].ToString();
-                m_playersArray[i].SetCustomProperties(m_playerProperties);
-            }
+            Hashtable m_playerProperties = new Hashtable();
+            m_playerProperties["Team"] = teams[i].ToString();
+            m_playersArray[i].SetCustomProperties(m_playerProperties);
         }
     }
 
@@ -281,6 +278,21 @@ public class LevelManager : MonoBehaviourPunCallbacks
     {
         m_photonView.RPC("showFirstTimerInfo", RpcTarget.All, p_playerInfo);
     }
+    IEnumerator WaitForRedParticleSystem()
+    {
+        m_redParticleSystem.gameObject.SetActive(true);
+        m_redParticleSystem.Play();
+        yield return new WaitForSeconds(m_redParticleSystem.main.duration);
+        m_redParticleSystem.gameObject.SetActive(false);
+    }
+
+    IEnumerator WaitForBlueParticleSystem()
+    {
+        m_blueParticleSystem.gameObject.SetActive(true);
+        m_blueParticleSystem.Play();
+        yield return new WaitForSeconds(m_blueParticleSystem.main.duration);
+        m_blueParticleSystem.gameObject.SetActive(false);
+    }
 
     public void updateRedScore()
     {
@@ -293,6 +305,7 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_redTeamScore += 1;
         m_redTeamScoreTMP.text = "Red: " + m_redTeamScore.ToString();
         vibrationOfTheCamera();
+        StartCoroutine(WaitForRedParticleSystem());
         m_ball.gameObject.transform.position = new Vector3(0.0f, 0.8f, -0.35f);
         m_ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         m_ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
@@ -310,6 +323,7 @@ public class LevelManager : MonoBehaviourPunCallbacks
         m_blueTeamScore += 1;
         m_blueTeamScoreTMP.text = "Blue: " + m_blueTeamScore.ToString();
         vibrationOfTheCamera();
+        StartCoroutine(WaitForBlueParticleSystem());
         m_ball.gameObject.transform.position = new Vector3(0.0f, 0.8f, -0.35f);
         m_ball.GetComponent<Rigidbody>().velocity = Vector3.zero;
         m_ball.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;

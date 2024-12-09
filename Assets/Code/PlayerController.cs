@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     [SerializeField] protected Transform m_ballPosition;
     [SerializeField] protected float m_kickForce;
     [SerializeField] protected bool m_canKick;
+    [SerializeField] protected Ball m_ballOfTheGame;
 
     PhotonView m_PV;
 
@@ -95,10 +96,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
             m_myAnim.SetBool("JOG", false);
             m_myAnim.SetBool("STOP", false);
             m_myAnim.SetBool("KICK", true);
-            GameObject m_ball = m_ballPosition.GetChild(0).gameObject;
-            m_ball.GetComponent<Rigidbody>().isKinematic = false;
-            m_ball.gameObject.transform.SetParent(null);
-            m_ball.GetComponent<Rigidbody>().AddForce(transform.forward * m_kickForce, ForceMode.Impulse);
+            //GameObject m_ball = m_ballPosition.GetChild(0).gameObject;
+            //m_ball.GetComponent<Rigidbody>().isKinematic = false;
+            //m_ball.gameObject.transform.SetParent(null);
+            m_ballOfTheGame.GetComponent<Rigidbody>().AddForce(transform.forward * m_kickForce, ForceMode.Impulse);
             StartCoroutine(cooldownTimer());
         }
 
@@ -130,10 +131,24 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
         if (p_other.gameObject.CompareTag("Ball") && !m_canKick)
         {
-            p_other.GetComponent<Rigidbody>().isKinematic = true;
-            p_other.gameObject.transform.position = m_ballPosition.transform.position;
-            p_other.gameObject.transform.SetParent(m_ballPosition.transform, true);
+            m_ballOfTheGame = p_other.gameObject.GetComponent<Ball>();
+            //p_other.GetComponent<Rigidbody>().isKinematic = true;
+            m_ballOfTheGame.gameObject.transform.position = m_ballPosition.transform.position;
+            //p_other.gameObject.transform.SetParent(m_ballPosition.transform, true);
             m_canKick = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider p_other)
+    {
+        if (!m_PV.IsMine)
+        {
+            return;
+        }
+        if (p_other.gameObject.CompareTag("Ball"))
+        {
+            m_ballOfTheGame = null;
+            m_canKick = false;
         }
     }
 
