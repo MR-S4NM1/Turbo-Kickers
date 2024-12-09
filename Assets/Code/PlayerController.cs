@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
     [Header("UI Player")]
     [SerializeField] TextMeshProUGUI m_currentTeamText;
     [SerializeField] TextMeshPro m_nicknameTMP;
+    [SerializeField] Image m_teamImage;
 
     [SerializeField] protected string m_currentTeamName;
 
@@ -68,7 +69,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         m_myAnim.SetBool("STOP", true);
         PhotonPeer.RegisterType(typeof(Color), (byte)'C', TypeTransformer.SerializeColor, TypeTransformer.DeserializeColor);
         m_currentTeamText.text = "Team...";
+        m_currentTeamText.color = Color.white;
         m_nicknameTMP.text = gameObject.name;
+        m_teamImage.color = Color.black;
 
         m_cmImpulseSource = FindObjectOfType<CinemachineImpulseSource>();
 
@@ -88,19 +91,6 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             LevelNetworkManager.Instance.disconnectFromCurrentRoom();
-        }
-
-        if (Input.GetKeyDown(KeyCode.K) && m_canKick)
-        {
-            playerSpeed = 0;
-            m_myAnim.SetBool("JOG", false);
-            m_myAnim.SetBool("STOP", false);
-            m_myAnim.SetBool("KICK", true);
-            //GameObject m_ball = m_ballPosition.GetChild(0).gameObject;
-            //m_ball.GetComponent<Rigidbody>().isKinematic = false;
-            //m_ball.gameObject.transform.SetParent(null);
-            m_ballOfTheGame.GetComponent<Rigidbody>().AddForce(transform.forward * m_kickForce, ForceMode.Impulse);
-            StartCoroutine(cooldownTimer());
         }
 
         if (Input.GetKey(KeyCode.Tab))
@@ -131,11 +121,23 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
         if (p_other.gameObject.CompareTag("Ball") && !m_canKick)
         {
-            m_ballOfTheGame = p_other.gameObject.GetComponent<Ball>();
+            //m_ballOfTheGame = p_other.gameObject.GetComponent<Ball>();
             //p_other.GetComponent<Rigidbody>().isKinematic = true;
-            m_ballOfTheGame.gameObject.transform.position = m_ballPosition.transform.position;
+            //m_ballOfTheGame.gameObject.transform.position = m_ballPosition.transform.position;
             //p_other.gameObject.transform.SetParent(m_ballPosition.transform, true);
             m_canKick = true;
+        }
+        if (p_other.gameObject.CompareTag("Ball") && Input.GetKeyDown(KeyCode.K) && m_canKick)
+        {
+            playerSpeed = 0;
+            m_myAnim.SetBool("JOG", false);
+            m_myAnim.SetBool("STOP", false);
+            m_myAnim.SetBool("KICK", true);
+            //GameObject m_ball = m_ballPosition.GetChild(0).gameObject;
+            //m_ball.GetComponent<Rigidbody>().isKinematic = false;
+            //m_ball.gameObject.transform.SetParent(null);
+            p_other.GetComponent<Rigidbody>().AddForce(transform.forward * m_kickForce, ForceMode.Impulse);
+            StartCoroutine(cooldownTimer());
         }
     }
 
@@ -147,7 +149,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
         }
         if (p_other.gameObject.CompareTag("Ball"))
         {
-            m_ballOfTheGame = null;
+            //m_ballOfTheGame = null;
             m_canKick = false;
         }
     }
@@ -238,13 +240,15 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback {
                 case "Red":
                     m_currentTeamText.text = "Red Team";
                     m_currentTeamName = "Red Team";
-                    m_currentTeamText.color = Color.red;
+                    m_currentTeamText.color = Color.white;
+                    m_teamImage.color = Color.red;
                     this.gameObject.transform.position = new Vector3(Random.Range(-10, 11), 0.0f, Random.Range(-5, -16));
                     break;
                 case "Blue":
                     m_currentTeamText.text = "Blue Team";
                     m_currentTeamName = "Blue Team";
-                    m_currentTeamText.color = Color.blue;
+                    m_currentTeamText.color = Color.white;
+                    m_teamImage.color = Color.blue;
                     this.gameObject.transform.position = new Vector3(Random.Range(-10, 11), 0.0f, Random.Range(5, 16));
                     break;
             }

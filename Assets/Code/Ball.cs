@@ -5,6 +5,10 @@ using Photon.Pun;
 
 public class Ball : MonoBehaviour
 {
+    #region References
+    [SerializeField] protected Rigidbody rb;
+    #endregion
+
     #region RuntimeVariables
     PhotonView m_pv;
     [SerializeField] public bool m_hasEnteredTheRedGoal;
@@ -12,7 +16,8 @@ public class Ball : MonoBehaviour
     #endregion
     void Start()
     {
-        m_pv = GetComponent<PhotonView>();    
+        m_pv = GetComponent<PhotonView>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision other)
@@ -36,7 +41,9 @@ public class Ball : MonoBehaviour
 
         if (other.gameObject.CompareTag("SideWall"))
         {
-            this.gameObject.transform.position = new Vector3();
+            this.gameObject.transform.position = new Vector3(0.0f, 0.8f, -0.35f);
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 

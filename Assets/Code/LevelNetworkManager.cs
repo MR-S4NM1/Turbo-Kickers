@@ -48,6 +48,5 @@ public class LevelNetworkManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         print("Salió el player: " + otherPlayer.NickName);
-        //PlayersWinnerManager.Instance.PlayersCount--;
     }
 }

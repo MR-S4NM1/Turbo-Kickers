@@ -92,9 +92,9 @@ public class LevelManager : MonoBehaviourPunCallbacks
         setLevelManagerSate(LevelManagerState.Waiting);
 
         m_redTeamScoreTMP.text = "Red: " + 0;
-        m_redTeamScoreTMP.color = Color.red;
+        m_redTeamScoreTMP.color = Color.white;
         m_blueTeamScoreTMP.text = "Blue: " + 0;
-        m_blueTeamScoreTMP.color = Color.blue;
+        m_blueTeamScoreTMP.color = Color.white;
 
         m_photonView.RPC("activateOrDeactivateBall", RpcTarget.AllBuffered, false);
     }
@@ -251,10 +251,14 @@ public class LevelManager : MonoBehaviourPunCallbacks
     {
         m_winnerstext.text = p_winners;
         m_winnerstext.color = p_winnersColor;
+        m_playersCanMove = false;
+        m_victoryPanel.SetActive(true);
+        m_exitButton.SetActive(true);
+        Cursor.visible = true;
         print(m_winnerstext.text);
     }
 
-    protected void checkWinnersAndUpdateUI()
+    public void checkWinnersAndUpdateUI()
     {
         if(m_blueTeamScore > m_redTeamScore)
         {
@@ -268,10 +272,6 @@ public class LevelManager : MonoBehaviourPunCallbacks
         {
             m_photonView.RPC("winnersInfo", RpcTarget.All, "Tie!", Color.white);
         }
-
-        m_victoryPanel.SetActive(true);
-        m_exitButton.SetActive(true);
-        Cursor.visible = true;
     }
 
     public void getNewInfoGame(string p_playerInfo)

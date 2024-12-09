@@ -35,6 +35,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     [Header("All main menus subpanels")]
     [SerializeField] GameObject m_titlePanel;
     [SerializeField] GameObject m_setupPanel;
+    [SerializeField] GameObject m_creditsPanel;
 
     [Header("All major panels")]
     [SerializeField] GameObject m_loadingPanel;
@@ -110,7 +111,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         if (m_newNickname.text == "")
         {
             m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
-            m_nicknameFailedTextMeshProUGUI.text = "Introduce un nombre, no lo dejes en blanco.";
+            m_nicknameFailedTextMeshProUGUI.text = "Enter a nickname!";
             print("Necesita un nombre.");
             return;
         }
@@ -119,10 +120,18 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
             PhotonNetwork.NickName = m_newNickname.text;
         }
 
+        if (!userHasChosenPlayerType)
+        {
+            m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
+            m_nicknameFailedTextMeshProUGUI.text = "Select a character!";
+            return;
+        }
+
         if (m_newRoomName.text == "")
         {
-            m_joinRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
+            m_joinRoomFailedTextMeshProUGUI.text = "Enter a room name!";
             m_joinRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+            return;
         }
         else
         {
@@ -143,7 +152,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         if (m_newNickname.text == "")
         {
             m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
-            m_nicknameFailedTextMeshProUGUI.text = "Introduce un nombre, no lo dejes en blanco.";
+            m_nicknameFailedTextMeshProUGUI.text = "Enter a room name!";
             print("Necesita un nombre.");
             return;
         }
@@ -152,8 +161,16 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
             PhotonNetwork.NickName = m_newNickname.text;
         }
 
-        if(int.Parse(m_newNumberOfPlayer.text) % 2 == 1)
+        if (!userHasChosenPlayerType)
         {
+            m_nicknameFailedTextMeshProUGUI.gameObject.SetActive(true);
+            m_nicknameFailedTextMeshProUGUI.text = "Select a character!";
+            return;
+        }
+
+        if (int.Parse(m_newNumberOfPlayer.text) % 2 == 1)
+        {
+            m_nicknameFailedTextMeshProUGUI.text = "The players number must be an even number!";
             print("Debe ser par");
             return;
         }
@@ -161,8 +178,8 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         {
             if (m_newRoomName.text == "")
             {
-                m_createRoomFailedTextMeshProUGUI.text = "Este espacio no lo puedes dejar en blanco.";
                 m_createRoomFailedTextMeshProUGUI.gameObject.SetActive(true);
+                m_createRoomFailedTextMeshProUGUI.text = "Enter a room name!";
             }
             else
             {
@@ -214,6 +231,18 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
         //m_exitButton.gameObject.SetActive(true);
         //m_backButton.gameObject.SetActive(false);
         //m_vsModeButton.gameObject.SetActive(false);
+    }
+
+    public void CreditsButton()
+    {
+        m_creditsPanel.SetActive(true);
+        m_titlePanel.SetActive(false);
+    }
+
+    public void CreditsBackButton()
+    {
+        m_creditsPanel.SetActive(false);
+        m_titlePanel.SetActive(true);
     }
 
     public void setPlayerA()
