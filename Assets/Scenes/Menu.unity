@@ -3357,11 +3357,18 @@ MonoBehaviour:
   m_text: 'Credits
 
 
-    Programming: MR_SANMI and CARPI
+    Programming: Mr_Sanmi and Carpi.
+
 
     Design: Mr_sanmi.
 
-    Art:'
+
+    Art:
+    MiMU STUDIO, Vefects, VenCreations, and Sherbb.
+
+
+    Online Services: Photon
+    Engine.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 83a9b492478c4d649b4661112f885161, type: 2}
   m_sharedMaterial: {fileID: 188021344360755678, guid: 83a9b492478c4d649b4661112f885161, type: 2}
@@ -3388,15 +3395,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 55
+  m_fontSizeBase: 55
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
